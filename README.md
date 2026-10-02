@@ -1,4 +1,4 @@
-# Portfolio optimiser (week 1)
+# Portfolio optimiser
 
 Research tool, not a trading bot. You estimate portfolio weights on **historical returns**, then (from week 2) you **test those weights on later dates** the optimiser did not see.
 
@@ -44,8 +44,3 @@ python3 -m portopt.cli --market UK --start 2015-01-01 --end 2019-12-31 --out fro
 ```bash
 pytest
 ```
-
-## How to talk about this
-
-- The frontier is **in-sample**. It is the best risk–return tradeoff *on the estimation window*, not a promise about the future.
-- Do not say the optimiser “beats the market”. Week 2–3 will compare it honestly to equal-weight and an index, **including costs**.
