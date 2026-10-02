@@ -30,13 +30,13 @@ pip install -r requirements.txt
 Default US names, **2015–2019** as the in-sample window. That end date is deliberate: week 2 will use 2020 onward as the test window.
 
 ```bash
-python -m portopt.cli --market US --start 2015-01-01 --end 2019-12-31 --out frontier.png
+python3 -m portopt.cli --market US --start 2015-01-01 --end 2019-12-31 --out frontier.png
 ```
 
 UK:
 
 ```bash
-python -m portopt.cli --market UK --start 2015-01-01 --end 2019-12-31 --out frontier_uk.png
+python3 -m portopt.cli --market UK --start 2015-01-01 --end 2019-12-31 --out frontier_uk.png
 ```
 
 ## Tests (no network)
