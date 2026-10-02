@@ -2,7 +2,7 @@
 
 Research tool, not a trading bot. You estimate portfolio weights on **historical returns**, then (from week 2) you **test those weights on later dates** the optimiser did not see.
 
-This week: download prices → simple returns → mean `μ` and covariance `Σ` → long-only weights → **in-sample** efficient frontier. HI MY NANE IS AMIDJ this is a change
+This week: download prices → simple returns → mean `μ` and covariance `Σ` → long-only weights → **in-sample** efficient frontier.
 
 ## What each folder is
 
