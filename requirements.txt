@@ -1,0 +1,7 @@
+pandas>=2.2
+numpy>=1.26
+scipy>=1.13
+yfinance>=0.2.40
+matplotlib>=3.9
+streamlit>=1.38
+pytest>=8.3
