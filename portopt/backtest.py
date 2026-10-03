@@ -1,4 +1,4 @@
-"""Backtest engine — week 2.
+"""Backtest engine.
 
 Walks a weight vector (or a re-estimated rule) through later prices,
 rebalancing on a schedule and subtracting transaction costs from wealth.

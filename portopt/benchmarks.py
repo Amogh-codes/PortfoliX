@@ -1,4 +1,4 @@
-"""Equal-weight and index-fund paths — week 3.
+"""Equal-weight and index-fund paths.
 
 Same rebalance calendar and cost model as the optimiser so the comparison
 is fair.

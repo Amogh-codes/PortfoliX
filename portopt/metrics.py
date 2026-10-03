@@ -1,4 +1,4 @@
-"""Performance numbers from an equity curve — week 3.
+"""Performance numbers from an equity curve.
 
 Return, volatility, Sharpe ratio, maximum drawdown. Implemented as pure
 functions so tests can use a handmade wealth series with known answers.
