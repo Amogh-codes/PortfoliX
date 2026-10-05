@@ -1,20 +1,10 @@
-"""Backtest engine: test a strategy on data it has NOT seen.
- 
-How it works (one trading day at a time, from test_start onwards):
- 
-1. On a rebalance day, estimate mu and cov from the returns BEFORE that day
-   only (no peeking at the future), ask the optimiser for target weights,
-   and pay transaction costs on whatever has to be traded.
-   With reestimate=False the weights are chosen ONCE, using only data before
-   test_start, and later rebalances just trade back to those same weights.
-   That is a strict hold-out: no test-period data ever touches the estimate.
-2. Apply that day's returns:  wealth_new = wealth * (1 + r)  (simple returns,
-   same convention as returns.py).
-3. Weights drift with prices until the next rebalance day.
- 
-Costs: cost = wealth * turnover * cost_bps / 10,000, where turnover is the
-sum of |target weight - current weight|. Buying the first portfolio from
-cash counts as turnover = 1, so every strategy pays to get started.
+"""Backtest a strategy on unseen data.
+
+Estimate weights using data available before each rebalance, apply returns one
+day at a time, and account for transaction costs.
+
+With reestimate=False, weights are estimated once before test_start and kept
+fixed. The first portfolio purchase counts as turnover.
 """
  
 from __future__ import annotations
@@ -27,7 +17,7 @@ import pandas as pd
 from portopt.optimiser import Strategy, allocate
 from portopt.returns import estimate_mu_cov, simple_returns
 
-# Friendly name -> pandas period code (None = only buy once at the start).
+# Rebalance name -> pandas period code (None = buy once at the start).
 REBALANCE_RULES: dict[str, str | None] = {
     "never": None,
     "daily": "D",
@@ -40,7 +30,7 @@ REBALANCE_RULES: dict[str, str | None] = {
 
 @dataclass
 class BacktestResult:
-    """Everything a backtest produces."""
+    """Results produced by a backtest."""
 
     wealth: pd.Series  # portfolio value; first point = initial_wealth, before any return
     weights: pd.DataFrame  # target weights chosen on each rebalance date
@@ -65,27 +55,10 @@ def run_backtest(
     reestimate: bool = True,
     fixed_weights: pd.Series | None = None,
 ) -> BacktestResult:
-    """Backtest of one strategy on data after test_start.
-
-    prices:         date-indexed table of adjusted closes (columns = tickers).
-    strategy:       "equal_weight", "min_variance", "max_sharpe" or "risk_parity".
-    test_start:     first date whose returns are earned by the strategy.
-                    Everything before it is training data only.
-    lookback:       how many past daily returns to estimate mu/cov from.
-                    None = use everything before the rebalance date.
-    rebalance:      "never", "daily", "weekly", "monthly", "quarterly", "yearly".
-    cost_bps:       trading cost in basis points (10 = 0.10%) of traded value.
-    risk_free:      annual rate used by max_sharpe (same units as mu).
-    min_history:    minimum number of past returns needed to estimate mu/cov.
-    reestimate:     True  = walk-forward: re-estimate on every rebalance using
-                            only returns before that day (some are test-period).
-                    False = strict hold-out: estimate once from data before
-                            test_start and keep those target weights.
-    fixed_weights:  Use these weights (long-only, sum to 1) at every rebalance and
-                    never estimate anything. Pass weights you fitted on a separate
-                    optimisation period; `prices` can then contain ONLY the backtest
-                    window. test_start may be the first price date: you buy at that
-                    day's close and earn returns from the next day on.
+    """Backtest one strategy on data after test_start.
+    
+    Data before test_start is used for training. Set reestimate=False for a
+    strict hold-out, or pass fixed_weights to use weights fitted elsewhere.
     """
     if rebalance not in REBALANCE_RULES:
         raise ValueError(f"Unknown rebalance '{rebalance}'. Choose from {list(REBALANCE_RULES)}.")
@@ -131,7 +104,7 @@ def run_backtest(
                 target = fixed_weights
             elif reestimate or target is None:
                 start = 0 if lookback is None else i - lookback
-                window = rets.iloc[max(0, start) : i]  # rows strictly BEFORE today
+                window = rets.iloc[max(0, start) : i]  # use returns before today
                 mu, cov = estimate_mu_cov(window)
                 target = allocate(strategy, mu, cov, risk_free=risk_free)
  
