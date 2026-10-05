@@ -1,8 +1,6 @@
-"""Benchmarks to beat: equal-weight and an index fund.
+"""Benchmark strategies for comparison.
 
-Same rebalance calendar and cost model as the optimiser so the comparison
-is fair. If a fancy strategy cannot beat "just split money equally" or
-"just buy the index", it is not adding value.
+Use the same rebalance calendar and cost model as the optimiser.
 """
 
 from __future__ import annotations
@@ -21,11 +19,7 @@ def equal_weight_backtest(
     initial_wealth: float = 1.0,
     min_history: int = 60,
 ) -> BacktestResult:
-    """1/n in every stock, rebalanced back to 1/n on the same schedule.
-
-    Runs through the same engine as the optimiser, so dates, rebalance days
-    and costs match exactly. Use the same arguments you gave run_backtest.
-    """
+    """Backtest an equal-weight portfolio on the same schedule."""
     return run_backtest(
         prices,
         strategy="equal_weight",
@@ -44,13 +38,7 @@ def index_backtest(
     cost_bps: float = 10.0,
     initial_wealth: float = 1.0,
 ) -> pd.Series:
-    """Buy the index once on dates[0] and hold (SPY for US, ISF.L for UK).
-
-    dates: the wealth index of a strategy, e.g. `result.wealth.index`, so
-           both curves start and end on the same days. If the index misses a
-           date (different holidays), the last known price is used.
-    Pays the same one-off cost as a strategy buying its first portfolio.
-    """
+    """Buy the index on the first date and hold."""
     if isinstance(index_prices, pd.DataFrame):
         if index_prices.shape[1] != 1:
             raise ValueError("index_prices must be a single price column.")
