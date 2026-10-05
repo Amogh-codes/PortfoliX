@@ -1,7 +1,7 @@
 """Default stock lists and index tickers.
 
-Keep the universe small (8–15 liquid names). Mean-variance with 500 stocks
-produces unstable weights; a demo that you can explain is more useful.
+Keep the universe small (8–15 liquid names) for more stable weights and an
+easier-to-explain demo.
 """
 
 from __future__ import annotations
