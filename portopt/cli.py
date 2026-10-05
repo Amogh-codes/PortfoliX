@@ -1,4 +1,4 @@
-"""command line: download prices, estimate μ and Σ, plot the frontier.
+"""Command-line tool to download prices, estimate μ and Σ, and plot the frontier.
 
 Example:
     python -m portopt.cli --start 2015-01-01 --end 2019-12-31 --out frontier.png

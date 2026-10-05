@@ -1,11 +1,8 @@
-"""Long-only mean-variance weights via SciPy SLSQP.
+"""Long-only portfolio weights using SciPy SLSQP.
 
-All strategies return a pandas Series of weights that:
-- sum to 1 (fully invested)
-- are >= 0 (no shorting)
+All strategies return weights that sum to 1 and are non-negative.
 
-If the solver fails, we fall back to equal weights so a UI never dies
-silently. Tests check the equal-asset identity case, where the maths is known.
+If the solver fails, fall back to equal weights.
 """
 
 from __future__ import annotations
@@ -39,7 +36,7 @@ def min_variance(mu: pd.Series, cov: pd.DataFrame) -> pd.Series:
 
 
 def max_sharpe(mu: pd.Series, cov: pd.DataFrame, risk_free: float = 0.0) -> pd.Series:
-    """Maximise (μ'w − r_f) / sqrt(w'Σw). risk_free must use the same units as mu."""
+    """Maximise the Sharpe ratio. risk_free must use the same units as mu."""
     _validate(mu, cov)
 
     def neg_sharpe(w: np.ndarray) -> float:
@@ -57,7 +54,7 @@ def min_variance_for_target(
     cov: pd.DataFrame,
     target_return: float,
 ) -> pd.Series | None:
-    """Minimise variance subject to μ'w = target. Used to trace the frontier."""
+    """Minimise variance for a target return. Used to trace the frontier."""
     _validate(mu, cov)
     n = len(mu)
     extra = {"type": "eq", "fun": lambda w: float(w @ mu.values) - target_return}
@@ -72,10 +69,9 @@ def min_variance_for_target(
 
 
 def risk_parity(mu: pd.Series, cov: pd.DataFrame) -> pd.Series:
-    """Equal risk contribution: each name contributes ~1/n of portfolio variance.
+    """Equal risk contribution across assets.
 
-    Risk contribution of i is w_i * (Σw)_i. We minimise the squared gap
-    versus equal contributions. mu is unused; the signature matches the others.
+    Risk contribution is w_i * (Σw)_i. mu is unused; the signature matches the other strategies.
     """
     _validate(mu, cov)
     n = len(mu)

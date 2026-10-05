@@ -1,15 +1,13 @@
-"""Performance numbers from an equity curve (a "wealth" series).
- 
-A wealth series is a pandas Series of portfolio value over time, e.g.
-1.00, 1.01, 0.99, 1.03 ... Everything here is a pure function: wealth in,
-number out. That makes them easy to test with a handmade wealth series
-whose answers you can work out by hand.
+"""Performance metrics from a wealth series.
 
-Conventions (kept the same as the rest of portopt):
+A wealth series is a pandas Series of portfolio values over time. The
+functions here take wealth in and return a metric, which makes them easy
+to test with simple example data.
+
+Conventions:
 - Simple returns: r_t = W_t / W_{t-1} - 1
 - 252 trading days per year
-- Sharpe uses mean(daily return) * 252 as the annual return, the same way
-  returns.estimate_mu_cov annualises mu.
+- Sharpe uses mean daily return * 252 as the annual return
 """
  
 from __future__ import annotations

@@ -1,9 +1,9 @@
 """Download and cache adjusted close prices.
 
-Adjusted close includes splits and dividends. Using raw close would treat a
-2-for-1 split as a 50% crash, which would poison returns and the optimiser.
+Adjusted close accounts for splits and dividends. Raw close can treat a stock
+split as a large price drop and distort returns.
 
-Tests should load a CSV fixture instead of hitting Yahoo Finance.
+Tests should use a CSV fixture instead of Yahoo Finance.
 """
 
 from __future__ import annotations
@@ -101,8 +101,8 @@ def _extract_close(raw: pd.DataFrame, tickers: tuple[str, ...]) -> pd.DataFrame:
 def _clean_prices(prices: pd.DataFrame) -> pd.DataFrame:
     """Drop empty rows/cols, sort dates, and require a shared calendar.
 
-    Inner-join style dropna means we only keep days where every name has a
-    price. That avoids mixing US and UK holidays in one covariance matrix.
+    Keep only days where every stock has a price to avoid mixing different
+    trading calendars.
     """
     frame = prices.copy()
     frame.columns = [str(c).strip().upper() for c in frame.columns]

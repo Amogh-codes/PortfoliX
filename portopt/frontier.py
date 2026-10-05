@@ -1,8 +1,7 @@
 """In-sample efficient frontier.
 
-Each point is: minimise variance subject to a target expected return,
-long-only, fully invested. The curve lives in *in-sample* space — it is
-not a forecast of future returns. Label that clearly on any plot.
+Each point minimises variance for a target expected return. The curve is based
+on historical data and is not a forecast of future returns.
 """
 
 from __future__ import annotations
